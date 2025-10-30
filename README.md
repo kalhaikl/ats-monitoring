@@ -1,99 +1,62 @@
-ESP32 Monitoring dengan 2 PZEM004T v3 dan 1 PZEM017
+# 🚀 ATS Monitoring System berbasis ESP32
 
-Proyek ini bertujuan untuk melakukan monitoring parameter listrik dari tiga sumber daya: PLN, PLTS (Panel Surya), dan Baterai, menggunakan modul sensor PZEM004T v3 dan PZEM017 yang terhubung dengan mikrokontroler ESP32. Data ditampilkan secara real-time melalui Serial Monitor dan tidak melibatkan fungsi kontrol atau switching otomatis.
+ATS Monitoring adalah proyek **monitoring otomatis sistem Automatic Transfer Switch (ATS)** yang menggunakan **ESP32** untuk membaca data listrik dari **PZEM-004T v3 dan PZEM-017**, dengan output ditampilkan pada **Serial Monitor**. Sistem ini dirancang untuk memantau parameter penting seperti **tegangan, arus, daya, frekuensi, dan energi**, sehingga pengguna dapat mengetahui kondisi sumber listrik (PLN dan Genset) secara real-time.
 
-📌 Fitur Utama
+---
 
-Monitoring tegangan, arus, daya, energi, frekuensi, dan faktor daya PLN serta PLTS menggunakan PZEM004T v3
+## 🔧 **Fitur Utama**
+✅ Monitoring **dua sumber listrik (PLN & Genset)** secara bersamaan  
+✅ Menggunakan sensor **PZEM-004T v3** untuk PLN dan **PZEM-017** untuk arus DC (Genset atau baterai)  
+✅ Pembacaan **tegangan, arus, daya, dan energi** real-time  
+✅ Output langsung ke **Serial Monitor** (monitoring saja)  
+✅ Berbasis **ESP32** yang mendukung konektivitas LAN/WiFi (dapat dikembangkan menjadi IoT)
 
-Monitoring arus dan tegangan baterai menggunakan PZEM017 berbasis Modbus RS485
+---
 
-Komunikasi:
+## 📦 **Perangkat Keras yang Digunakan**
+| No | Komponen         | Jumlah | Keterangan         |
+|----|------------------|--------|--------------------|
+| 1  | ESP32 Dev Board  | 1      | Mikrokontroler utama |
+| 2  | PZEM-004T v3     | 2      | Untuk pengukuran PLN |
+| 3  | PZEM-017         | 1      | Untuk pengukuran DC (Genset/Baterai) |
+| 4  | Kabel & Power Supply | -  | Pendukung sistem |
 
-UART untuk PZEM004T v3
+---
 
-Modbus RTU via MAX485 untuk PZEM017
+## ⚙️ **Cara Kerja Sistem**
+1. ESP32 menginisialisasi komunikasi UART ke masing-masing modul PZEM.
+2. Setiap modul membaca nilai dari sumber listrik.
+3. Data dikirim dan ditampilkan pada Serial Monitor secara berkala.
+4. Output digunakan sebagai parameter monitoring kondisi PLN dan Genset.
 
-Output tampil pada Serial Monitor Arduino IDE
+---
 
-Sistem hanya untuk monitoring, tidak ada fungsi kendali beban
+## 🧪 **Tujuan Proyek**
+Proyek ini dibuat untuk keperluan **monitoring ATS (Automatic Transfer Switch)** agar pengguna dapat melihat:
+- Kondisi sumber utama (PLN)
+- Kondisi sumber cadangan (Genset)
+- Status tegangan/daya apakah dalam batas normal
+- Data historis energi listrik (kWh)
 
-🧰 Daftar Komponen
-No	Komponen	Jumlah	Keterangan
-1	ESP32 Dev Board	1	Mikrokontroler utama
-2	PZEM004T v3	2	Sensor PLN dan PLTS
-3	PZEM017	1	Sensor baterai (arus DC)
-4	Modul MAX485	1	Konverter RS485 ke UART
-5	Shunt Resistor	1	Untuk PZEM017 sesuai rating arus
-6	Kabel jumper	-	Koneksi antarmodul
-7	Power Supply 5V	1	Untuk ESP32 dan sensor jika dibutuhkan
-🔧 Library yang Digunakan
+> **Catatan:** Saat ini, proyek fokus pada monitoring saja. Pengembangan selanjutnya dapat mencakup pengiriman data ke dashboard IoT atau aplikasi mobile.
 
-Instalasi library melalui Library Manager Arduino IDE:
+---
 
-PZEM004Tv30 by Olehs
-ModbusMaster by Doc Walker
+---
 
-🔌 Konfigurasi Pin ESP32
-PZEM004T v3 (PLN)
-ESP32	PZEM004T v3
-TX	RX
-RX	TX
-PZEM004T v3 (PLTS)
-ESP32	PZEM004T v3
-TX	RX
-RX	TX
-PZEM017 via MAX485
-ESP32 Pin	MAX485 Pin	Keterangan
-GPIO 26	RO	Receive Data
-GPIO 22	RE/DE	Enable Transceiver
-GPIO xx	DI	Transmit Data (TX)
-GND	GND	Ground
-VCC 5V	VCC	Daya modul MAX485
+## 📌 **Instalasi & Penggunaan**
+### 1️⃣ Clone Repository
+```bash
+git clone https://github.com/kalhaikl/ats-monitoring.git
+```
+### Contoh Output pada Serial Monitor ###
+PLN Voltage : 220.5 V
+PLN Current : 1.23 A
+PLN Power   : 270.15 W
 
-Catatan: Sesuaikan pin RX/TX dengan program aktual di file PZEM-INTEGRATION.ino.
+GENSET Voltage : 48.2 V
+GENSET Current : 3.10 A
+GENSET Power   : 149.42 W
 
-▶️ Cara Menggunakan
+---------------------------
 
-Hubungkan modul sesuai tabel di atas.
-
-Buka Arduino IDE dan pilih:
-
-Board: ESP32 Dev Module
-
-Port: sesuaikan dengan COM yang terdeteksi
-
-Upload program PZEM-INTEGRATION.ino
-
-Buka Serial Monitor dengan baudrate yang sesuai (misal 115200)
-
-Pantau data secara real-time
-
-📟 Contoh Tampilan Serial Monitor
-=== MONITORING PLN ===
-Voltage: 220.50 V
-Current: 0.45 A
-Power: 98.20 W
-Energy: 0.123 kWh
-Frequency: 50.01 Hz
-PF: 0.98
-
-=== MONITORING PLTS ===
-Voltage: 18.40 V
-Current: 1.25 A
-Power: 23.00 W
-Energy: 0.045 kWh
-
-=== MONITORING BATERAI ===
-Voltage: 12.50 V
-Current: 2.10 A
-Power: 26.25 W
-Energy: 0.200 kWh
-
-🧪 Fungsi Program
-
-Melakukan pembacaan berkala menggunakan millis()
-
-Menghindari penggunaan delay() agar pembacaan tetap responsif
-
-Menampilkan hasil pembacaan setiap periode tertentu
